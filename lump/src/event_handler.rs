@@ -18,7 +18,7 @@ impl EventHandler {
 
     pub fn handle_keyboard_events(mut keyboard_input_events: EventReader<KeyboardInput>) {
         for event in keyboard_input_events.iter() {
-            //   info!("{:?}", event);
+            info!("{:?}", event);
         }
     }
 }

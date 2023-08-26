@@ -5,14 +5,13 @@ pub mod bash_connector;
 pub mod event_handler;
 use bash_connector::Cache;
 use event_handler::EventHandler;
-//watch -n 1 pstree
+
 fn main() {
     let mut cache = Cache {
         content: String::from(""),
     };
-    cache.collect_data();
     
-    let data_collection_thread = thread::spawn(move || {
+    let _data_collection_thread = thread::spawn(move || {
         cache.collect_data();
         thread::sleep(time::Duration::from_millis(1000));
     });

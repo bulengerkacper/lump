@@ -1,6 +1,4 @@
-use std::io::{BufRead, BufReader, Read};
-use std::process::{Command, Stdio};
-use std::thread;
+use std::process::Command;
 
 pub struct Cache {
     pub content: String,
@@ -20,7 +18,7 @@ impl Cache {
     }
 
     pub fn collect_data(&mut self) {
-        while true {
+        loop {
             if self.check_pstree_state() {}
         }
     }

@@ -2,12 +2,9 @@ use dioxus::prelude::*;
 use dioxus_desktop::Config;
 use futures::StreamExt;
 use std::cell::Cell;
-use std::{thread, time};
 pub mod bash_connector;
-pub mod gui;
 use bash_connector::Cache;
 use futures_channel::mpsc::{unbounded, UnboundedReceiver, UnboundedSender};
-use gui::Gui;
 
 fn main() {
     let (sender, receiver) = unbounded();
@@ -28,11 +25,6 @@ fn main() {
     )
 }
 
-enum Status {
-    Empty,
-    New,
-    Cached,
-}
 struct AppProps {
     sender: Cell<Option<UnboundedSender<String>>>,
     receiver: Cell<Option<UnboundedReceiver<String>>>,
@@ -65,11 +57,7 @@ fn app(cx: Scope<AppProps>) -> Element {
     });
     cx.render(rsx! {
         div {
-            "Helinka"
-            match output.get() {
-                String => rsx!("{output}"),
-                _ => rsx!("Scan"),
-            }
+            rsx!("{output}")
         }
     })
 }

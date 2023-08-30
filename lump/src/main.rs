@@ -2,9 +2,10 @@ use dioxus::prelude::*;
 use dioxus_desktop::Config;
 use futures::StreamExt;
 use std::cell::Cell;
-pub mod bash_connector;
 use bash_connector::Cache;
+use regex::Regex;
 use futures_channel::mpsc::{unbounded, UnboundedReceiver, UnboundedSender};
+pub mod bash_connector;
 
 fn main() {
     let (sender, receiver) = unbounded();
@@ -14,7 +15,6 @@ fn main() {
         let _ = other.unbounded_send(perform_action());
     });
 
-    // launch our app on the current thread - important because we spawn a window
     dioxus_desktop::launch_with_props(
         app,
         AppProps {

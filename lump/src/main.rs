@@ -1,22 +1,75 @@
 use dioxus::prelude::*;
+use dioxus_desktop::Config;
+use futures::StreamExt;
+use std::cell::Cell;
 use std::{thread, time};
-
 pub mod bash_connector;
 pub mod gui;
-use gui::Gui;
-//pub mod event_handler;
 use bash_connector::Cache;
-//use event_handler::EventHandler;
+use futures_channel::mpsc::{unbounded, UnboundedReceiver, UnboundedSender};
+use gui::Gui;
 
 fn main() {
+    let (sender, receiver) = unbounded();
+    let other = sender.clone();
+
+    std::thread::spawn(move || loop {
+        let _ = other.unbounded_send(perform_action());
+    });
+
+    // launch our app on the current thread - important because we spawn a window
+    dioxus_desktop::launch_with_props(
+        app,
+        AppProps {
+            sender: Cell::new(Some(sender)),
+            receiver: Cell::new(Some(receiver)),
+        },
+        Config::default(),
+    )
+}
+
+enum Status {
+    Empty,
+    New,
+    Cached,
+}
+struct AppProps {
+    sender: Cell<Option<UnboundedSender<String>>>,
+    receiver: Cell<Option<UnboundedReceiver<String>>>,
+}
+
+pub fn perform_action() -> String {
     let mut cache = Cache {
         content: String::from(""),
     };
 
-    let _data_collection_thread = thread::spawn(move || {
-        cache.collect_data();
-        thread::sleep(time::Duration::from_millis(1000));
-    });
+    if cache.collect_data() {
+        return cache.content.clone();
+    }
+    "".to_string()
+}
 
-    dioxus_desktop::launch(Gui::app);
+fn app(cx: Scope<AppProps>) -> Element {
+    let output = use_state(cx, || "".to_string());
+
+    let _ = use_coroutine(cx, |_: UnboundedReceiver<()>| {
+        let receiver = cx.props.receiver.take();
+        let output = output.to_owned();
+        async move {
+            if let Some(mut receiver) = receiver {
+                while let Some(msg) = receiver.next().await {
+                    output.set(msg);
+                }
+            }
+        }
+    });
+    cx.render(rsx! {
+        div {
+            "Helinka"
+            match output.get() {
+                String => rsx!("{output}"),
+                _ => rsx!("Scan"),
+            }
+        }
+    })
 }

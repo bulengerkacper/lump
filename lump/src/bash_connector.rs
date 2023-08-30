@@ -17,9 +17,11 @@ impl Cache {
         return false;
     }
 
-    pub fn collect_data(&mut self) {
+    pub fn collect_data(&mut self) -> bool {
         loop {
-            if self.check_pstree_state() {}
+            if self.check_pstree_state() {
+                return true;
+            }
         }
     }
 }

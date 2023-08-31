@@ -1,7 +1,7 @@
 # Lump
 
 Lump is task manager with gui for linux based operating systems.
-![App Screenshot](https://imgur.com/a/hj8Vuzm)
+![App Screenshot](https://i.imgur.com/PT2sFKF.png)
 
 ## Run Locally
 Prerequisit: rust.

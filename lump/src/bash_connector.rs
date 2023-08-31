@@ -25,12 +25,6 @@ impl Cache {
             return true;
         }
         return false;
-        //let out: Vec<(String, String)> = parse_pstree(pstree_output.to_string());
-        // if self.content != out {
-        //     self.content = out;
-        //     return true;
-        // }
-        // return false;
     }
 
     pub fn collect_data(&mut self) -> bool {
@@ -40,29 +34,6 @@ impl Cache {
             }
         }
     }
-}
-
-fn parse_pstree(output: String) -> Vec<(String, String)> {
-    let lines: Vec<&str> = output.lines().collect();
-    let mut results: Vec<(String, String)> = Vec::new();
-    for line in lines {
-        let parts: Vec<&str> = line.split('(').collect();
-
-        if parts.len() >= 2 {
-            let process_name = parts[0];
-            let trimmed = process_name
-                .replace("|", "")
-                .replace("-", "")
-                .replace("{", "")
-                .replace("}", "")
-                .replace("`", "");
-            let pid_part = parts[1].split(')').next().unwrap_or_default();
-            let process_pid = pid_part.trim_end_matches(')');
-            results.push((trimmed.to_string(), process_pid.to_string()));
-        }
-    }
-
-    results
 }
 
 fn parse_ps_output(ps_output: String) -> Vec<(String, String, String, String)> {
@@ -76,7 +47,7 @@ fn parse_ps_output(ps_output: String) -> Vec<(String, String, String, String)> {
             let pid = fields[1].to_string();
             let cpu = fields[2].to_string();
             let mem = fields[3].to_string();
-            println!("{} {} {} {}",proc_name,pid,cpu,mem);
+            //println!("{} {} {} {}",proc_name,pid,cpu,mem);
             processes.push((proc_name, pid, cpu, mem));
         }
     }

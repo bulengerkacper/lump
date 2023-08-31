@@ -5,7 +5,7 @@ use futures::StreamExt;
 use futures_channel::mpsc::{unbounded, UnboundedReceiver, UnboundedSender};
 use regex::Regex;
 use std::cell::Cell;
-
+use std::thread;
 use std::process::Command;
 
 pub mod bash_connector;
@@ -16,6 +16,7 @@ fn main() {
 
     std::thread::spawn(move || loop {
         let _ = other.unbounded_send(perform_action());
+        thread::sleep_ms(5000);
     });
 
     let config = Config::new().with_window(
@@ -73,7 +74,7 @@ fn app(cx: Scope<AppProps>) -> Element {
             style: "  float:left; font-size: 0.875em; color:white;background-color:#999999;
             // padding:5px;
             // margin:5px;
-            width: 300px;
+            width: 400px;
             height: 920px;
             overflow-y: auto;
             overflow-x: hidden;

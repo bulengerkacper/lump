@@ -5,6 +5,9 @@ use futures::StreamExt;
 use futures_channel::mpsc::{unbounded, UnboundedReceiver, UnboundedSender};
 use regex::Regex;
 use std::cell::Cell;
+
+use std::process::Command;
+
 pub mod bash_connector;
 
 fn main() {
@@ -61,6 +64,18 @@ fn app(cx: Scope<AppProps>) -> Element {
     cx.render(rsx! {
         for (index, (key, value)) in output.iter().enumerate() {
             rsx!("{key} {value} ")
+            button {
+                onclick: move |event| 
+                {
+                    Command::new("kill").arg("-9").arg(value).output().expect("Failed to execute command");
+
+                },
+                "kill me!"
+            }
+            // button {
+            //     style: " font-size: 9px;",
+            //     onclick: move |_| Command::new("kill").arg("-9").arg(value).output().expect("Failed to execute command"),
+            // }
             br {}
         }
     })

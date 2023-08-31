@@ -1,22 +1,21 @@
-use bash_connector::Cache;
+use bash_parser::Cache;
 use dioxus::prelude::*;
 use dioxus_desktop::{Config, WindowBuilder};
 use futures::StreamExt;
 use futures_channel::mpsc::{unbounded, UnboundedReceiver, UnboundedSender};
-use regex::Regex;
 use std::cell::Cell;
 use std::process::Command;
-use std::thread;
+use std::{thread};
 
-pub mod bash_connector;
+pub mod bash_parser;
 
 fn main() {
-    let (sender, receiver) = unbounded();
-    let other = sender.clone();
+    let (_sender, receiver) = unbounded();
+    let other = _sender.clone();
 
     std::thread::spawn(move || loop {
         let _ = other.unbounded_send(perform_action());
-        thread::sleep_ms(5000);
+        thread::sleep(std::time::Duration::from_millis(5000));
     });
 
     let config = Config::new().with_window(
@@ -28,7 +27,7 @@ fn main() {
     dioxus_desktop::launch_with_props(
         app,
         AppProps {
-            sender: Cell::new(Some(sender)),
+            _sender: Cell::new(Some(_sender)),
             receiver: Cell::new(Some(receiver)),
         },
         config,
@@ -36,7 +35,7 @@ fn main() {
 }
 
 struct AppProps {
-    sender: Cell<Option<UnboundedSender<Vec<(String, String, String, String)>>>>,
+    _sender: Cell<Option<UnboundedSender<Vec<(String, String, String, String)>>>>,
     receiver: Cell<Option<UnboundedReceiver<Vec<(String, String, String, String)>>>>,
 }
 
@@ -53,7 +52,7 @@ pub fn perform_action() -> Vec<(String, String, String, String)> {
 }
 
 fn app(cx: Scope<AppProps>) -> Element {
-    let mut empty: Vec<(String, String, String, String)> = Vec::new();
+    let empty: Vec<(String, String, String, String)> = Vec::new();
     let output = use_state(cx, || empty);
 
     let _ = use_coroutine(cx, |_: UnboundedReceiver<()>| {
@@ -82,36 +81,34 @@ fn app(cx: Scope<AppProps>) -> Element {
             height: 4900px; // gunna go hell
             ",
             h3 { "List of all process"}
-            table 
+            table
             {
                 tr{
 
                     th {
-                        {rsx!("name") }
+                        rsx!("name") 
                     }
                     th {
                         style:"width: 100px;",
-                        {rsx!("pid") }
+                        rsx!("pid") 
                     }
                     th {
                         style:"width: 100px;",
-                        {rsx!("proc") }
+                        rsx!("proc") 
                     }
                     th {
                         style:"width: 100px;",
-                        {rsx!("mem") }
+                        rsx!("mem") 
                     }
                 }
-                for (index, (proc, pid,cpu,mem)) in output.iter().enumerate() {
+                for (_index, (proc, pid,cpu,mem)) in output.iter().enumerate() {
                     tr {
-                        //rsx!("{proc} {pid} {cpu} {mem}")
-                        td {rsx!("{proc}") }
-                        td {rsx!("{pid}") }
-                        td {rsx!("{cpu}") }
-                        td {rsx!("{mem}") }
+                        td { rsx!("{proc}") }
+                        td { rsx!("{pid}") }
+                        td { rsx!("{cpu}") }
+                        td { rsx!("{mem}") }
                         button {
-                            //style: " color:white;background-color:#009900;",
-                            onclick: move |event| {
+                            onclick: move |_event| {
                                 Command::new("kill").arg("-9").arg(pid).output().expect("Failed to execute command");
                             },
                             "kill me!"

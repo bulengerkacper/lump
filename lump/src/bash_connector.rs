@@ -51,3 +51,22 @@ fn parse_pstree(output: String) -> Vec<(String, String)> {
 
     results
 }
+
+fn parse_ps_output(ps_output: &str) -> Vec<(String, String, String, String)> {
+    let mut processes = Vec::new();
+
+    for line in ps_output.lines().skip(1) {
+        let fields: Vec<&str> = line.split_whitespace().collect();
+
+        if fields.len() >= 11 {
+            let user = fields[0].to_string();
+            let pid = fields[1].to_string();
+            let cpu = fields[2].to_string();
+            let mem = fields[3].to_string();
+            
+            processes.push((user, pid, cpu, mem));
+        }
+    }
+
+    processes
+}

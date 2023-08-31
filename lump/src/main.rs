@@ -1,6 +1,6 @@
 use bash_connector::Cache;
 use dioxus::prelude::*;
-use dioxus_desktop::Config;
+use dioxus_desktop::{Config, WindowBuilder};
 use futures::StreamExt;
 use futures_channel::mpsc::{unbounded, UnboundedReceiver, UnboundedSender};
 use regex::Regex;
@@ -18,13 +18,19 @@ fn main() {
         let _ = other.unbounded_send(perform_action());
     });
 
+    let config = Config::new().with_window(
+        WindowBuilder::default()
+            .with_title("Lump - your linux task manager")
+            .with_inner_size(dioxus_desktop::LogicalSize::new(600.0, 900.0)),
+    );
+
     dioxus_desktop::launch_with_props(
         app,
         AppProps {
             sender: Cell::new(Some(sender)),
             receiver: Cell::new(Some(receiver)),
         },
-        Config::default(),
+        config,
     )
 }
 
@@ -64,8 +70,17 @@ fn app(cx: Scope<AppProps>) -> Element {
     cx.render(rsx! {
         link { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" },
         div {
-            style: " width:300px; float:left; color:white;background-color:#999999;",
-            h1 { "Process list"}
+            style: "  float:left; font-size: 0.875em; color:white;background-color:#999999;
+            // padding:5px;
+            // margin:5px;
+            width: 300px;
+            height: 920px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            text-align:justify;
+            
+            ",
+            h3 { "List of all process"}
             for (index, (key, value)) in output.iter().enumerate() {
                 rsx!("{key} {value} ")
                 button {
@@ -79,8 +94,15 @@ fn app(cx: Scope<AppProps>) -> Element {
             }
         }
         div {
-            style: " width:300px; float:right; color:white;background-color:#999999;",
-            h1 { "Process list"}
+            style: " width:300px;
+            float:right;
+            color:white;
+            background-color:#999999;
+            // padding:5px;
+            // margin:5px;
+            ",
+            h3 { "Top consuming"}
+
         }
     })
 }

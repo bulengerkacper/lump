@@ -11,22 +11,18 @@ pub mod bash_parser;
 
 fn main() {
     let (_sender, receiver) = unbounded();
-    let other = _sender.clone();
-    start_pooling(other, 5000);
-
-    let config = Config::new().with_window(
-        WindowBuilder::default()
-            .with_title("Lump - your linux task manager")
-            .with_inner_size(dioxus_desktop::LogicalSize::new(600.0, 900.0)),
-    );
-
+    start_pooling(_sender.clone(), 5000);
     dioxus_desktop::launch_with_props(
         app,
         AppProps {
             _sender: Cell::new(Some(_sender)),
             receiver: Cell::new(Some(receiver)),
         },
-        config,
+        Config::new().with_window(
+            WindowBuilder::default()
+                .with_title("Lump - your linux task manager")
+                .with_inner_size(dioxus_desktop::LogicalSize::new(600.0, 900.0)),
+        ),
     )
 }
 

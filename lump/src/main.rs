@@ -5,8 +5,8 @@ use futures::StreamExt;
 use futures_channel::mpsc::{unbounded, UnboundedReceiver, UnboundedSender};
 use regex::Regex;
 use std::cell::Cell;
-use std::thread;
 use std::process::Command;
+use std::thread;
 
 pub mod bash_connector;
 
@@ -36,11 +36,11 @@ fn main() {
 }
 
 struct AppProps {
-    sender: Cell<Option<UnboundedSender<Vec<(String, String,String,String)>>>>,
-    receiver: Cell<Option<UnboundedReceiver<Vec<(String, String,String,String)>>>>,
+    sender: Cell<Option<UnboundedSender<Vec<(String, String, String, String)>>>>,
+    receiver: Cell<Option<UnboundedReceiver<Vec<(String, String, String, String)>>>>,
 }
 
-pub fn perform_action() -> Vec<(String, String,String,String)> {
+pub fn perform_action() -> Vec<(String, String, String, String)> {
     let mut cache = Cache {
         content: Vec::new(),
     };
@@ -48,12 +48,12 @@ pub fn perform_action() -> Vec<(String, String,String,String)> {
     if cache.collect_data() {
         return cache.content.clone();
     }
-    let empty: Vec<(String, String,String,String)> = Vec::new();
+    let empty: Vec<(String, String, String, String)> = Vec::new();
     return empty;
 }
 
 fn app(cx: Scope<AppProps>) -> Element {
-    let mut empty: Vec<(String, String,String,String)> = Vec::new();
+    let mut empty: Vec<(String, String, String, String)> = Vec::new();
     let output = use_state(cx, || empty);
 
     let _ = use_coroutine(cx, |_: UnboundedReceiver<()>| {

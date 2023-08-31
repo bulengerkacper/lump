@@ -32,3 +32,5 @@ Start an app
   cargo run
 ```
 
+Disclaimer:
+Lump works however definitely will have to be cleaned up, someday.

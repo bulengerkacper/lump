@@ -35,7 +35,7 @@ struct AppProps {
     receiver: Cell<Option<UnboundedReceiver<Vec<(String, String, String, String)>>>>,
 }
 
-pub fn perform_action() -> Vec<(String, String, String, String)> {
+pub fn start_data_collecting() -> Vec<(String, String, String, String)> {
     let mut cache = Cache {
         content: Vec::new(),
     };
@@ -49,7 +49,7 @@ pub fn perform_action() -> Vec<(String, String, String, String)> {
 
 pub fn start_pooling(other: UnboundedSender<Vec<(String, String, String, String)>>, milis: u64) {
     std::thread::spawn(move || loop {
-        let _ = other.unbounded_send(perform_action());
+        let _ = other.unbounded_send(start_data_collecting());
         thread::sleep(std::time::Duration::from_millis(milis));
     });
 }

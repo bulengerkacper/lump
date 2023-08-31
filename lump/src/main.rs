@@ -62,10 +62,10 @@ fn app(cx: Scope<AppProps>) -> Element {
     });
 
     cx.render(rsx! {
-
         link { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" },
         div {
-            style: " color:white;background-color:#999999;",
+            style: " width:300px; float:left; color:white;background-color:#999999;",
+            h1 { "Process list"}
             for (index, (key, value)) in output.iter().enumerate() {
                 rsx!("{key} {value} ")
                 button {
@@ -77,6 +77,10 @@ fn app(cx: Scope<AppProps>) -> Element {
                 }
                 br {}
             }
+        }
+        div {
+            style: " width:300px; float:right; color:white;background-color:#999999;",
+            h1 { "Process list"}
         }
     })
 }

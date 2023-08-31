@@ -1,4 +1,5 @@
 use std::process::Command;
+use std::{thread, time::Duration};
 
 pub struct Cache {
     pub content: Vec<(String, String)>,
@@ -44,20 +45,6 @@ fn parse_pstree(output: String) -> Vec<(String, String)> {
                 .replace("`", "");
             let pid_part = parts[1].split(')').next().unwrap_or_default();
             let process_pid = pid_part.trim_end_matches(')');
-
-            // let result = Command::new("ps")
-            //     .arg("-p")
-            //     .arg(process_pid)
-            //     .arg("-o")
-            //     .arg("%cpu,%mem")
-            //     .arg("--no-headers")
-            //     .output()
-            //     .expect("Error ocured.");
-            // if result.stdout.len() > 0 {
-            //     let z = String::from_utf8_lossy(&result.stdout);
-            //     println!("{}", z);
-            // }
-
             results.push((trimmed.to_string(), process_pid.to_string()));
         }
     }

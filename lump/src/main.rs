@@ -69,32 +69,36 @@ fn app(cx: Scope<AppProps>) -> Element {
     });
 
     cx.render(rsx! {
+        div{
+            "style": " background-color:black;",
+
+
         link { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" },
         div {
-            style: "  float:left; font-size: 0.875em; color:white;background-color:#999999;
-            // padding:5px;
-            // margin:5px;
-            width: 600px;
-            height: 900px;
+            style: "  float:left; font-size: 0.875em; color:white;
+            background-color:black;
             overflow-y: auto;
-            overflow-x: hidden;
-            text-align:justify;
-            
+            width:4900px;    // for this particular shjet
+            height: 4900px; // gunna go hell
             ",
             h3 { "List of all process"}
             table 
             {
                 tr{
+
                     th {
                         {rsx!("name") }
                     }
                     th {
+                        style:"width: 100px;",
                         {rsx!("pid") }
                     }
                     th {
+                        style:"width: 100px;",
                         {rsx!("proc") }
                     }
                     th {
+                        style:"width: 100px;",
                         {rsx!("mem") }
                     }
                 }
@@ -117,5 +121,5 @@ fn app(cx: Scope<AppProps>) -> Element {
                 }
             }
         }
-    })
+    }})
 }

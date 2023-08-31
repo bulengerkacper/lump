@@ -30,7 +30,7 @@ impl Cache {
         }
     }
     fn parse_ps_output(&self, ps_output: String) -> Vec<(String, String, String, String)> {
-        let mut processes = Vec::new();
+        let mut process = Vec::new();
 
         for line in ps_output.lines().skip(1) {
             let fields: Vec<&str> = line.split_whitespace().collect();
@@ -42,17 +42,17 @@ impl Cache {
                 let mem = fields[3].to_string();
                 if let Some(last) = self.get_last_segment_after_last_slash(&proc_name) {
                     if last.chars().any(|c| c.is_alphabetic()) {
-                        processes.push((last, pid, cpu, mem));
+                        process.push((last, pid, cpu, mem));
                     } else {
-                        processes.push((proc_name, pid, cpu, mem));
+                        process.push((proc_name, pid, cpu, mem));
                     }
                 } else {
-                    processes.push((proc_name, pid, cpu, mem));
+                    process.push((proc_name, pid, cpu, mem));
                 }
             }
         }
 
-        processes
+        process
     }
 
     fn get_last_segment_after_last_slash(&self, input: &String) -> Option<String> {

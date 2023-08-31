@@ -1,10 +1,10 @@
+use bash_connector::Cache;
 use dioxus::prelude::*;
 use dioxus_desktop::Config;
 use futures::StreamExt;
-use std::cell::Cell;
-use bash_connector::Cache;
-use regex::Regex;
 use futures_channel::mpsc::{unbounded, UnboundedReceiver, UnboundedSender};
+use regex::Regex;
+use std::cell::Cell;
 pub mod bash_connector;
 
 fn main() {
@@ -26,23 +26,25 @@ fn main() {
 }
 
 struct AppProps {
-    sender: Cell<Option<UnboundedSender<String>>>,
-    receiver: Cell<Option<UnboundedReceiver<String>>>,
+    sender: Cell<Option<UnboundedSender<Vec<(String, String)>>>>,
+    receiver: Cell<Option<UnboundedReceiver<Vec<(String, String)>>>>,
 }
 
-pub fn perform_action() -> String {
+pub fn perform_action() -> Vec<(String, String)> {
     let mut cache = Cache {
-        content: String::from(""),
+        content: Vec::new(),
     };
 
     if cache.collect_data() {
         return cache.content.clone();
     }
-    "".to_string()
+    let empty: Vec<(String, String)> = Vec::new();
+    return empty;
 }
-
+//linie 56 i 62 do przepisania
 fn app(cx: Scope<AppProps>) -> Element {
-    let output = use_state(cx, || "".to_string());
+    let mut empty: Vec<(String, String)> = Vec::new();
+    let output = use_state(cx, || empty);
 
     let _ = use_coroutine(cx, |_: UnboundedReceiver<()>| {
         let receiver = cx.props.receiver.take();
@@ -50,14 +52,16 @@ fn app(cx: Scope<AppProps>) -> Element {
         async move {
             if let Some(mut receiver) = receiver {
                 while let Some(msg) = receiver.next().await {
-                    output.set(msg);
+                    output.set(msg)
                 }
             }
         }
     });
+
     cx.render(rsx! {
-        div {
-            rsx!("{output}")
+        for (index, (key, value)) in output.iter().enumerate() {
+            rsx!("{key} {value} ")
+            br {}
         }
     })
 }

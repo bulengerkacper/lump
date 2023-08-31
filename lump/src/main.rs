@@ -44,7 +44,7 @@ pub fn perform_action() -> Vec<(String, String)> {
     let empty: Vec<(String, String)> = Vec::new();
     return empty;
 }
-//linie 56 i 62 do przepisania
+
 fn app(cx: Scope<AppProps>) -> Element {
     let mut empty: Vec<(String, String)> = Vec::new();
     let output = use_state(cx, || empty);
@@ -62,21 +62,21 @@ fn app(cx: Scope<AppProps>) -> Element {
     });
 
     cx.render(rsx! {
-        for (index, (key, value)) in output.iter().enumerate() {
-            rsx!("{key} {value} ")
-            button {
-                onclick: move |event| 
-                {
-                    Command::new("kill").arg("-9").arg(value).output().expect("Failed to execute command");
 
-                },
-                "kill me!"
+        link { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" },
+        div {
+            style: " color:white;background-color:#999999;",
+            for (index, (key, value)) in output.iter().enumerate() {
+                rsx!("{key} {value} ")
+                button {
+                    //style: " color:white;background-color:#009900;",
+                    onclick: move |event| {
+                        Command::new("kill").arg("-9").arg(value).output().expect("Failed to execute command");
+                    },
+                    "kill me!"
+                }
+                br {}
             }
-            // button {
-            //     style: " font-size: 9px;",
-            //     onclick: move |_| Command::new("kill").arg("-9").arg(value).output().expect("Failed to execute command"),
-            // }
-            br {}
         }
     })
 }

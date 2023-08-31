@@ -3,8 +3,7 @@ use std::process::Command;
 pub struct Cache {
     pub content: Vec<(String, String)>,
 }
-//ps aux --sort=-pcpu
-//pstree
+
 impl Cache {
     pub fn check_pstree_state(&mut self) -> bool {
         let output = Command::new("pstree")
@@ -37,9 +36,15 @@ fn parse_pstree(output: String) -> Vec<(String, String)> {
 
         if parts.len() >= 2 {
             let process_name = parts[0];
+            let trimmed = process_name
+                .replace("|", "")
+                .replace("-", "")
+                .replace("{", "")
+                .replace("}", "")
+                .replace("`", "");
             let pid_part = parts[1].split(')').next().unwrap_or_default();
             let process_pid = pid_part.trim_end_matches(')');
-            results.push((process_name.to_string(), process_pid.to_string()));
+            results.push((trimmed.to_string(), process_pid.to_string()));
         }
     }
     results

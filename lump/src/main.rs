@@ -74,36 +74,48 @@ fn app(cx: Scope<AppProps>) -> Element {
             style: "  float:left; font-size: 0.875em; color:white;background-color:#999999;
             // padding:5px;
             // margin:5px;
-            width: 400px;
-            height: 920px;
+            width: 600px;
+            height: 900px;
             overflow-y: auto;
             overflow-x: hidden;
             text-align:justify;
             
             ",
             h3 { "List of all process"}
-            for (index, (proc, pid,cpu,mem)) in output.iter().enumerate() {
-                rsx!("{proc} {pid} {cpu} {mem}")
-                button {
-                    //style: " color:white;background-color:#009900;",
-                    onclick: move |event| {
-                        Command::new("kill").arg("-9").arg(pid).output().expect("Failed to execute command");
-                    },
-                    "kill me!"
+            table 
+            {
+                tr{
+                    th {
+                        {rsx!("name") }
+                    }
+                    th {
+                        {rsx!("pid") }
+                    }
+                    th {
+                        {rsx!("proc") }
+                    }
+                    th {
+                        {rsx!("mem") }
+                    }
                 }
-                br {}
+                for (index, (proc, pid,cpu,mem)) in output.iter().enumerate() {
+                    tr {
+                        //rsx!("{proc} {pid} {cpu} {mem}")
+                        td {rsx!("{proc}") }
+                        td {rsx!("{pid}") }
+                        td {rsx!("{cpu}") }
+                        td {rsx!("{mem}") }
+                        button {
+                            //style: " color:white;background-color:#009900;",
+                            onclick: move |event| {
+                                Command::new("kill").arg("-9").arg(pid).output().expect("Failed to execute command");
+                            },
+                            "kill me!"
+                        }
+                        br {}
+                    }
+                }
             }
-        }
-        div {
-            style: " width:300px;
-            float:right;
-            color:white;
-            background-color:#999999;
-            // padding:5px;
-            // margin:5px;
-            ",
-            h3 { "Top consuming"}
-
         }
     })
 }

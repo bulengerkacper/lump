@@ -94,11 +94,11 @@ fn app(cx: Scope<AppProps>) -> Element {
                     }
                     th {
                         style:"width: 100px;",
-                        rsx!("proc") 
+                        rsx!("proc %") 
                     }
                     th {
                         style:"width: 100px;",
-                        rsx!("mem") 
+                        rsx!("mem %") 
                     }
                 }
                 for (_index, (proc, pid,cpu,mem)) in output.iter().enumerate() {

@@ -5,18 +5,14 @@ use futures::StreamExt;
 use futures_channel::mpsc::{unbounded, UnboundedReceiver, UnboundedSender};
 use std::cell::Cell;
 use std::process::Command;
-use std::{thread};
+use std::thread;
 
 pub mod bash_parser;
 
 fn main() {
     let (_sender, receiver) = unbounded();
     let other = _sender.clone();
-
-    std::thread::spawn(move || loop {
-        let _ = other.unbounded_send(perform_action());
-        thread::sleep(std::time::Duration::from_millis(5000));
-    });
+    start_pooling(other, 5000);
 
     let config = Config::new().with_window(
         WindowBuilder::default()
@@ -49,6 +45,13 @@ pub fn perform_action() -> Vec<(String, String, String, String)> {
     }
     let empty: Vec<(String, String, String, String)> = Vec::new();
     return empty;
+}
+
+pub fn start_pooling(other: UnboundedSender<Vec<(String, String, String, String)>>, milis: u64) {
+    std::thread::spawn(move || loop {
+        let _ = other.unbounded_send(perform_action());
+        thread::sleep(std::time::Duration::from_millis(milis));
+    });
 }
 
 fn app(cx: Scope<AppProps>) -> Element {

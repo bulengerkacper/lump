@@ -2,7 +2,7 @@ use std::process::Command;
 use std::{thread, time::Duration};
 
 pub struct Cache {
-    pub content: Vec<(String, String)>,
+    pub content: Vec<(String, String,String,String)>,
 }
 
 impl Cache {
@@ -11,13 +11,26 @@ impl Cache {
             .arg("-p")
             .output()
             .expect("Failed to execute command");
+        let output_ps = Command::new("ps")
+            .arg("aux")
+            .arg("--sort")
+            .arg("-pcpu")
+            .output()
+            .expect("Failed to execute command");
         let pstree_output = String::from_utf8_lossy(&output.stdout);
-        let out: Vec<(String, String)> = parse_pstree(pstree_output.to_string());
+        let ps_output = String::from_utf8_lossy(&output_ps.stdout);        
+        let out: Vec<(String, String,String,String)> = parse_ps_output(ps_output.to_string());
         if self.content != out {
             self.content = out;
             return true;
         }
         return false;
+        //let out: Vec<(String, String)> = parse_pstree(pstree_output.to_string());
+        // if self.content != out {
+        //     self.content = out;
+        //     return true;
+        // }
+        // return false;
     }
 
     pub fn collect_data(&mut self) -> bool {
@@ -52,19 +65,19 @@ fn parse_pstree(output: String) -> Vec<(String, String)> {
     results
 }
 
-fn parse_ps_output(ps_output: &str) -> Vec<(String, String, String, String)> {
+fn parse_ps_output(ps_output: String) -> Vec<(String, String, String, String)> {
     let mut processes = Vec::new();
 
     for line in ps_output.lines().skip(1) {
         let fields: Vec<&str> = line.split_whitespace().collect();
 
         if fields.len() >= 11 {
-            let user = fields[0].to_string();
+            let proc_name = fields[10].to_string();
             let pid = fields[1].to_string();
             let cpu = fields[2].to_string();
             let mem = fields[3].to_string();
-            
-            processes.push((user, pid, cpu, mem));
+            println!("{} {} {} {}",proc_name,pid,cpu,mem);
+            processes.push((proc_name, pid, cpu, mem));
         }
     }
 

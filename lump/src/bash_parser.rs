@@ -1,7 +1,8 @@
 use std::process::Command;
+pub type ProcData = (String, String, String, String);
 
 pub struct Cache {
-    pub content: Vec<(String, String, String, String)>,
+    pub content: Vec<ProcData>,
 }
 
 impl Cache {
@@ -13,7 +14,7 @@ impl Cache {
             .output()
             .expect("Failed to execute command");
         let ps_output = String::from_utf8_lossy(&output_ps.stdout);
-        let out: Vec<(String, String, String, String)> =
+        let out: Vec<ProcData> =
             self.parse_ps_output(ps_output.to_string());
         if self.content != out {
             self.content = out;
@@ -29,7 +30,7 @@ impl Cache {
             }
         }
     }
-    fn parse_ps_output(&self, ps_output: String) -> Vec<(String, String, String, String)> {
+    fn parse_ps_output(&self, ps_output: String) -> Vec<ProcData> {
         let mut process = Vec::new();
 
         for line in ps_output.lines().skip(1) {

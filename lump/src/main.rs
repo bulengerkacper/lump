@@ -1,4 +1,4 @@
-use bash_parser::Cache;
+use bash_parser::*;
 use dioxus::prelude::*;
 use dioxus_desktop::{Config, WindowBuilder};
 use futures::StreamExt;
@@ -27,11 +27,11 @@ fn main() {
 }
 
 struct AppProps {
-    _sender: Cell<Option<UnboundedSender<Vec<(String, String, String, String)>>>>,
-    receiver: Cell<Option<UnboundedReceiver<Vec<(String, String, String, String)>>>>,
+    _sender: Cell<Option<UnboundedSender<Vec<ProcData>>>>,
+    receiver: Cell<Option<UnboundedReceiver<Vec<ProcData>>>>,
 }
 
-pub fn start_data_collecting() -> Vec<(String, String, String, String)> {
+pub fn start_data_collecting() -> Vec<ProcData> {
     let mut cache = Cache {
         content: Vec::new(),
     };
@@ -39,11 +39,11 @@ pub fn start_data_collecting() -> Vec<(String, String, String, String)> {
     if cache.collect_data() {
         return cache.content.clone();
     }
-    let empty: Vec<(String, String, String, String)> = Vec::new();
+    let empty: Vec<ProcData> = Vec::new();
     return empty;
 }
 
-pub fn start_pooling(other: UnboundedSender<Vec<(String, String, String, String)>>, milis: u64) {
+pub fn start_pooling(other: UnboundedSender<Vec<ProcData>>, milis: u64) {
     std::thread::spawn(move || loop {
         let _ = other.unbounded_send(start_data_collecting());
         thread::sleep(std::time::Duration::from_millis(milis));
@@ -51,7 +51,7 @@ pub fn start_pooling(other: UnboundedSender<Vec<(String, String, String, String)
 }
 
 fn app(cx: Scope<AppProps>) -> Element {
-    let empty: Vec<(String, String, String, String)> = Vec::new();
+    let empty: Vec<ProcData> = Vec::new();
     let output = use_state(cx, || empty);
 
     let _ = use_coroutine(cx, |_: UnboundedReceiver<()>| {

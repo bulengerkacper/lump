@@ -14,8 +14,7 @@ impl Cache {
             .output()
             .expect("Failed to execute command");
         let ps_output = String::from_utf8_lossy(&output_ps.stdout);
-        let out: Vec<ProcData> =
-            self.parse_ps_output(ps_output.to_string());
+        let out: Vec<ProcData> = self.parse_ps_output(ps_output.to_string());
         if self.content != out {
             self.content = out;
             return true;
@@ -44,8 +43,7 @@ impl Cache {
                 if let Some(last) = self.get_last_segment_after_last_slash(&proc_name) {
                     if last.chars().any(|c| c.is_alphabetic()) {
                         process.push((last, pid, cpu, mem));
-                    } else {
-                        process.push((proc_name, pid, cpu, mem));
+                        continue;
                     }
                 } else {
                     process.push((proc_name, pid, cpu, mem));
